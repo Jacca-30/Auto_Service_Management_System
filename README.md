@@ -101,7 +101,7 @@ Klientas - sistemoje nesiregistruoja ir neprisijungia. Jis gali viešoje formoje
 
 ### Paprasta schema
 
-![IAVS UML Komponentų schema](IAVS.drawio(1).svg)
+![IAVS UML Komponentų schema](IAVS.drawio.svg)
 
 | Sistemos dalis | Atsakomybė |
 |---|---|
