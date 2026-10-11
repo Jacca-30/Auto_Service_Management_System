@@ -1,8 +1,5 @@
 # Individualaus Autoserviso Valdymo Sistema
 
-Kursinio darbo I dalis: projektavimo dokumentas
-
-
 ## 1. Problema ir idėja
 
 **Sistema vienu sakiniu:** Sistema yra skirta individualiai dirbantiems automechanikams ir mažiems autoservisams centralizuotai valdyti darbų srautą, stebėti atsarginių dalių prieinamumą ir automatizuoti remonto sąmatų skaičiavimą.
