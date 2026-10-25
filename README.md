@@ -129,8 +129,6 @@ Pasirinktos technologijos leis sukurti funkcionalią ir lengvai prižiūrimą in
 
 ### AI rengiant šį dokumentą
 
-[Nurodykite, ar naudojote AI. Jei taip, užpildykite lentelę.]
-
 | Priemonė ir užduotis | Ką panaudojau | Ką atmečiau arba perrašiau ir kodėl | Kaip patikrinau |
 |---|---|---|---|
 | ChatGPT - idėjos proto šturmas | Generavau ir aptariau sistemos funkcionalumo, komponentų struktūros ir technologijų pasirinkimo idėjas. | Atmečiau arba pakoregavau pasiūlymus, kurie buvo nereikalingi projekto apimčiai arba per sudėtingi įgyvendinti per numatytą laiką. | Įvertinau idėjų atitiktį projekto tikslui, funkciniams reikalavimams ir turimoms techninėms žinioms. |
