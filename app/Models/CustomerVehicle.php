@@ -45,9 +45,4 @@ class CustomerVehicle extends Model
     {
         return $this->hasMany(RepairOrder::class);
     }
-
-    public function customerVehicles(): HasMany
-    {
-        return $this->hasMany(CustomerVehicle::class);
-    }
 }

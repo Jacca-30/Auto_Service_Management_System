@@ -18,7 +18,6 @@ return new class extends Migration
             $table->integer('year')->nullable();
             $table->string('fuel_type')->nullable();
             $table->string('engine_code')->nullable();
-            $table->string('engine_type')->nullable();
             $table->integer('engine_displacement_cm3')->nullable();
             $table->integer('engine_power_kw')->nullable();
             $table->string('transmission_type')->nullable();

@@ -34,7 +34,6 @@ class Vehicle extends Model
         'year',
         'fuel_type',
         'engine_code',
-        'engine_type',
         'engine_displacement_cm3',
         'engine_power_kw',
         'transmission_type',

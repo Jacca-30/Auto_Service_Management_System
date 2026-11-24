@@ -44,5 +44,8 @@ Route::middleware(['auth', 'role:admin,employee'])->group(function () {
 
             Route::post('/{customerId}/vehicles', [CustomerVehicleController::class, 'store'])
                 ->name('vehicles.store');
+
+            Route::get('/{customerId}', [CustomerVehicleController::class, 'show'])
+                ->name('show');
         });
 });

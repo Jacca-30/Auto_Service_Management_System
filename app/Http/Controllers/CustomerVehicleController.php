@@ -10,6 +10,14 @@ use Illuminate\View\View;
 
 class CustomerVehicleController extends Controller
 {
+    public function show(int $customerId): View
+    {
+        $customer = Customer::with('customerVehicles.vehicle')
+            ->findOrFail($customerId);
+
+        return view('customers.show', compact('customer'));
+    }
+
     public function create(int $customerId): View
     {
         $customer = Customer::findOrFail($customerId);
@@ -27,7 +35,6 @@ class CustomerVehicleController extends Controller
             'year' => ['nullable', 'integer', 'min:1886', 'max:' . (date('Y') + 1)],
             'fuel_type' => ['nullable', 'string', 'max:50'],
             'engine_code' => ['nullable', 'string', 'max:50'],
-            'engine_type' => ['nullable', 'string', 'max:50'],
             'engine_displacement_cm3' => ['nullable', 'integer', 'min:1'],
             'engine_power_kw' => ['nullable', 'integer', 'min:1'],
             'transmission_type' => ['nullable', 'string', 'max:50'],
@@ -43,7 +50,6 @@ class CustomerVehicleController extends Controller
             'year' => $validated['year'] ?? null,
             'fuel_type' => $validated['fuel_type'] ?? null,
             'engine_code' => $validated['engine_code'] ?? null,
-            'engine_type' => $validated['engine_type'] ?? null,
             'engine_displacement_cm3' => $validated['engine_displacement_cm3'] ?? null,
             'engine_power_kw' => $validated['engine_power_kw'] ?? null,
             'transmission_type' => $validated['transmission_type'] ?? null,
