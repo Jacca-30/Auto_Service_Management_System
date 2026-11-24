@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="lt">
 <head>
@@ -48,6 +49,30 @@
         <div class="estimate-item">
             <h3>1 eilutė</h3>
 
+            <label>Inventoriaus prekė (nebūtina):</label><br>
+            <select class="inventory-select" onchange="fillInventoryItem(this)">
+                <option value="">-- Įvesti rankiniu būdu --</option>
+
+                @foreach ($inventoryItems as $inventoryItem)
+                    <option
+                        value="{{ $inventoryItem->id }}"
+                        data-name="{{ $inventoryItem->name }}"
+                        data-type="{{ $inventoryItem->type }}"
+                        data-oem="{{ $inventoryItem->oem_number }}"
+                        data-ap="{{ $inventoryItem->ap_number }}"
+                    >
+                        {{ $inventoryItem->name }}
+                        @if ($inventoryItem->oem_number)
+                            (OEM: {{ $inventoryItem->oem_number }})
+                        @endif
+                    </option>
+                @endforeach
+            </select>
+
+            <input type="hidden" name="items[0][inventory_item_id]" value="">
+
+            <br><br>
+
             <label>Tipas:</label><br>
             <select name="items[0][type]" required>
                 <option value="labor">Darbas</option>
@@ -82,7 +107,7 @@
 
             <br><br>
 
-            <label>Vieneto kaina (€):</label><br>
+            <label>Vieneto pardavimo kaina klientui (€):</label><br>
             <input type="number"
                    name="items[0][unit_price]"
                    min="0"
@@ -110,6 +135,31 @@
 <script>
     let itemIndex = 1;
 
+    function fillInventoryItem(select) {
+        const item = select.closest('.estimate-item');
+        const option = select.options[select.selectedIndex];
+
+        const inventoryId = select.value;
+
+        item.querySelector('input[name$="[inventory_item_id]"]').value = inventoryId;
+
+        if (!inventoryId) {
+            return;
+        }
+
+        item.querySelector('input[name$="[description]"]').value =
+            option.dataset.name || '';
+
+        item.querySelector('input[name$="[oem_number]"]').value =
+            option.dataset.oem || '';
+
+        item.querySelector('input[name$="[ap_number]"]').value =
+            option.dataset.ap || '';
+
+        item.querySelector('select[name$="[type]"]').value =
+            option.dataset.type || 'part';
+    }
+
     function addItem() {
         const container = document.getElementById('estimate-items');
 
@@ -118,6 +168,30 @@
 
         item.innerHTML = `
             <h3>${itemIndex + 1} eilutė</h3>
+
+            <label>Inventoriaus prekė (nebūtina):</label><br>
+            <select class="inventory-select" onchange="fillInventoryItem(this)">
+                <option value="">-- Įvesti rankiniu būdu --</option>
+
+                @foreach ($inventoryItems as $inventoryItem)
+        <option
+            value="{{ $inventoryItem->id }}"
+                        data-name="{{ e($inventoryItem->name) }}"
+                        data-type="{{ $inventoryItem->type }}"
+                        data-oem="{{ e($inventoryItem->oem_number ?? '') }}"
+                        data-ap="{{ e($inventoryItem->ap_number ?? '') }}"
+                    >
+                        {{ $inventoryItem->name }}
+        @if ($inventoryItem->oem_number)
+        (OEM: {{ $inventoryItem->oem_number }})
+                        @endif
+        </option>
+@endforeach
+        </select>
+
+        <input type="hidden" name="items[${itemIndex}][inventory_item_id]" value="">
+
+            <br><br>
 
             <label>Tipas:</label><br>
             <select name="items[${itemIndex}][type]" required>
@@ -153,7 +227,7 @@
 
             <br><br>
 
-            <label>Vieneto kaina (€):</label><br>
+            <label>Vieneto pardavimo kaina klientui (€):</label><br>
             <input type="number"
                    name="items[${itemIndex}][unit_price]"
                    min="0"
@@ -172,4 +246,3 @@
 
 </body>
 </html>
-

@@ -11,6 +11,7 @@ class EstimateItem extends Model
     use HasFactory;
 
     protected $fillable = [
+        'inventory_item_id',
         'type',
         'description',
         'oem_number',
@@ -31,5 +32,10 @@ class EstimateItem extends Model
     public function estimate(): BelongsTo
     {
         return $this->belongsTo(Estimate::class);
+    }
+
+    public function inventoryItem(): BelongsTo
+    {
+        return $this->belongsTo(InventoryItem::class);
     }
 }

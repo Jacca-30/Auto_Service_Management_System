@@ -11,6 +11,7 @@ use App\Mail\EstimateSentMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Models\Estimate;
+use App\Models\InventoryItem;
 
 class EstimateController extends Controller
 {
@@ -26,13 +27,18 @@ class EstimateController extends Controller
             abort(403, 'Sąmatą galima kurti tik atlikus diagnostiką.');
         }
 
-        return view('estimates.create', compact('repairOrder'));
+        $inventoryItems = InventoryItem::query()
+            ->orderBy('name')
+            ->get();
+
+        return view('estimates.create', compact('repairOrder', 'inventoryItems'));
     }
 
     public function store(Request $request, int $repairOrderId): RedirectResponse
     {
         $validated = $request->validate([
             'items' => ['required', 'array', 'min:1'],
+            'items.*.inventory_item_id' => ['nullable', 'integer'],
             'items.*.type' => ['required', 'in:labor,part,material'],
             'items.*.description' => ['required', 'string', 'max:255'],
             'items.*.oem_number' => ['nullable', 'string', 'max:255'],
@@ -45,13 +51,42 @@ class EstimateController extends Controller
             ->forTenant($request->user()->tenant_id)
             ->findOrFail($repairOrderId);
 
-        if ($repairOrder->status !== 'diagnosing' ||
-            $repairOrder->diagnostics()->doesntExist()) {
+        if (
+            $repairOrder->status !== 'diagnosing' ||
+            $repairOrder->diagnostics()->doesntExist()
+        ) {
             return back()->with(
                 'error',
                 'Sąmatą galima kurti tik atlikus diagnostiką.'
             );
         }
+
+        // Patikriname pasirinktas inventoriaus prekes.
+        foreach ($validated['items'] as $index => &$item) {
+            $inventoryItem = null;
+
+            if (!empty($item['inventory_item_id'])) {
+                $inventoryItem = InventoryItem::query()
+                    ->find($item['inventory_item_id']);
+
+                if (!$inventoryItem) {
+                    throw ValidationException::withMessages([
+                        "items.$index.inventory_item_id" =>
+                            'Pasirinkta inventoriaus prekė nerasta arba nepriklauso jūsų autoservisui.',
+                    ]);
+                }
+
+                // Duomenis paimame iš inventoriaus, o ne iš naršyklės.
+                $item['type'] = $inventoryItem->type;
+                $item['description'] = $inventoryItem->name;
+                $item['oem_number'] = $inventoryItem->oem_number;
+                $item['ap_number'] = $inventoryItem->ap_number;
+            } else {
+                $item['inventory_item_id'] = null;
+            }
+        }
+
+        unset($item);
 
         DB::transaction(function () use ($repairOrder, $validated, $request) {
             $previousEstimate = $repairOrder->estimates()
@@ -98,6 +133,7 @@ class EstimateController extends Controller
                 );
 
                 $estimateItem = $estimate->items()->make([
+                    'inventory_item_id' => $item['inventory_item_id'],
                     'type' => $item['type'],
                     'description' => $item['description'],
                     'oem_number' => $item['oem_number'] ?? null,
@@ -115,6 +151,7 @@ class EstimateController extends Controller
             ->route('repair-orders.show', $repairOrderId)
             ->with('success', 'Sąmata sėkmingai sukurta.');
     }
+
 
 
     public function send(Request $request, int $estimateId): RedirectResponse

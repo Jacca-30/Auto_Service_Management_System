@@ -1,9 +1,9 @@
-
 <?php
 
 use App\Models\Tenant;
 use App\Models\Vehicle;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\User;
 
 uses(RefreshDatabase::class);
 
@@ -14,6 +14,12 @@ test('customer can be associated with a vehicle', function () {
         'email' => 'service@example.test',
         'slug' => 'test-service',
     ]);
+
+    $user = User::factory()->create([
+        'tenant_id' => $tenant->id,
+    ]);
+
+    $this->actingAs($user);
 
     $customer = $tenant->customers()->create([
         'name' => 'Jonas Jonaitis',

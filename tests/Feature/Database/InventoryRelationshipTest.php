@@ -22,6 +22,8 @@ test('inventory item is correctly associated with tenant and movements', functio
         'password' => 'password123',
     ]);
 
+    $this->actingAs($employee);
+
     $inventoryItem = new InventoryItem([
         'type' => 'part',
         'name' => 'Alyvos filtras',
