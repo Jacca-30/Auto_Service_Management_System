@@ -84,4 +84,26 @@ class RepairOrderController extends Controller
             'Remonto užklausa sėkmingai atmesta.'
         );
     }
+
+    public function complete(Request $request, int $id): RedirectResponse
+    {
+        $repairOrder = RepairOrder::query()
+            ->forTenant($request->user()->tenant_id)
+            ->findOrFail($id);
+
+        if ($repairOrder->status !== 'in_repair') {
+            return back()->with(
+                'error',
+                'Užbaigti galima tik šiuo metu remontuojamą automobilį.'
+            );
+        }
+
+        $repairOrder->status = 'completed';
+        $repairOrder->save();
+
+        return back()->with(
+            'success',
+            'Remontas sėkmingai užbaigtas.'
+        );
+    }
 }

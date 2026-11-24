@@ -8,27 +8,48 @@ use App\Http\Controllers\PublicRepairRequestController;
 use App\Http\Controllers\RepairOrderController;
 use App\Http\Controllers\DiagnosticController;
 use App\Http\Controllers\EstimateController;
+use App\Http\Controllers\EstimateResponseController;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
+//Samatos perziuros ir atsakymo marsrutai
+Route::prefix('estimate')
+    ->name('estimates.')
+    ->group(function () {
+    Route::get('/respond/{token}', [EstimateResponseController::class, 'show'])
+        ->name('respond');
+
+    Route::post('/respond/{token}/approve', [EstimateResponseController::class, 'approve'])
+        ->name('approve');
+
+    Route::post('/respond/{token}/reject', [EstimateResponseController::class, 'reject'])
+        ->name('reject');
+
+        Route::get('/result/{status}', [EstimateResponseController::class, 'result'])
+            ->name('result');
+});
+
+//Viesa forma
+Route::get('/request/{tenant:slug}', function (\App\Models\Tenant $tenant) {
+    return view('repair-requests.create', compact('tenant'));
+})->name('repair-requests.create');
+
+Route::post('/request/{tenant:slug}', [PublicRepairRequestController::class, 'store'])
+    ->name('repair-requests.store')
+    ->middleware('throttle:5,1'); // penkios užklausos per minutę
+
+//Guest naudotojai
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])
         ->name('login');
 
     Route::post('/login', [LoginController::class, 'store'])
         ->name('login.store');
-
-    Route::get('/request/{tenant:slug}', function (\App\Models\Tenant $tenant) {
-        return view('repair-requests.create', compact('tenant'));
-    })->name('repair-requests.create');
-
-    Route::post('/request/{tenant:slug}', [PublicRepairRequestController::class, 'store'])
-        ->name('repair-requests.store')
-        ->middleware('throttle:5,1'); // penkios užklausos per minutę
 });
 
+//Autentifikuoti naudotojai
 Route::middleware(['auth', 'role:admin,employee'])->group(function () {
 
     Route::post('/logout', [LoginController::class, 'destroy'])
@@ -76,6 +97,9 @@ Route::middleware(['auth', 'role:admin,employee'])->group(function () {
             Route::patch('/{id}/decline', [RepairOrderController::class, 'decline'])
                 ->name('decline');
 
+            Route::patch('/{id}/complete', [RepairOrderController::class, 'complete'])
+                ->name('complete');
+
             Route::post('/{repairOrderId}/diagnostics', [DiagnosticController::class, 'store'])
                 ->name('diagnostics.store');
 
@@ -84,5 +108,8 @@ Route::middleware(['auth', 'role:admin,employee'])->group(function () {
 
             Route::post('/{repairOrderId}/estimates', [EstimateController::class, 'store'])
                 ->name('estimates.store');
+
+            Route::post('/estimates/{estimateId}/send', [EstimateController::class, 'send'])
+                ->name('estimates.send');
         });
 });

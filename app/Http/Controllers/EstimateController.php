@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
+use App\Mail\EstimateSentMail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use App\Models\Estimate;
 
 class EstimateController extends Controller
 {
@@ -111,4 +115,52 @@ class EstimateController extends Controller
             ->route('repair-orders.show', $repairOrderId)
             ->with('success', 'Sąmata sėkmingai sukurta.');
     }
+
+
+    public function send(Request $request, int $estimateId): RedirectResponse
+    {
+        $estimate = Estimate::query()
+            ->whereHas('repairOrder', function ($query) use ($request) {
+                $query->forTenant($request->user()->tenant_id);
+            })
+            ->with([
+                'items',
+                'repairOrder.customerVehicle.customer',
+                'repairOrder.customerVehicle.vehicle',
+            ])
+            ->findOrFail($estimateId);
+
+        if (!$estimate->is_current || $estimate->status !== 'draft') {
+            return back()->with('error', 'Galima siųsti tik aktualią nepatvirtintą sąmatą.');
+        }
+
+        if ($estimate->repairOrder->status !== 'diagnosing') {
+            return back()->with('error', 'Sąmatą galima siųsti tik diagnostikos etape.');
+        }
+
+        $customer = $estimate->repairOrder->customerVehicle->customer;
+
+        $token = Str::random(64);
+
+        $estimate->approval_token_hash = hash('sha256', $token);
+        $estimate->expires_at = now()->addDays(1);
+        $estimate->save();
+
+        $approvalUrl = route('estimates.respond', ['token' => $token]);
+
+        Mail::to($customer->email)->send(
+            new EstimateSentMail($estimate, $approvalUrl)
+        );
+
+        $estimate->status = 'sent';
+        $estimate->sent_at = now();
+        $estimate->save();
+
+        $repairOrder = $estimate->repairOrder;
+        $repairOrder->status = 'awaiting_approval';
+        $repairOrder->save();
+
+        return back()->with('success', 'Sąmata sėkmingai išsiųsta klientui.');
+    }
+
 }

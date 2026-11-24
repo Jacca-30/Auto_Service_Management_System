@@ -167,7 +167,34 @@
             @endif
         </h3>
 
-        <p><strong>Būsena:</strong> {{ $estimate->status }}</p>
+        @if ($repairOrder->status === 'in_repair')
+            <form
+                action="{{ route('repair-orders.complete', $repairOrder->id) }}"
+                method="POST"
+                onsubmit="return confirm('Ar tikrai norite pažymėti remontą kaip užbaigtą?')"
+            >
+                @csrf
+                @method('PATCH')
+
+                @if ($estimate->is_current)
+                    <button type="submit">Užbaigti remontą</button>
+                @endif
+            </form>
+        @endif
+
+        @if ($estimate->is_current && $estimate->status === 'draft')
+            <form
+                action="{{ route('repair-orders.estimates.send', $estimate->id) }}"
+                method="POST"
+                onsubmit="return confirm('Ar tikrai norite išsiųsti šią sąmatą klientui?')"
+            >
+                @csrf
+
+                <button type="submit">
+                    Siųsti sąmatą klientui
+                </button>
+            </form>
+        @endif
 
         <table border="1" cellpadding="8">
             <thead>
