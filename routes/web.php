@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerVehicleController;
+use App\Http\Controllers\PublicRepairRequestController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -15,6 +16,14 @@ Route::middleware('guest')->group(function () {
 
     Route::post('/login', [LoginController::class, 'store'])
         ->name('login.store');
+
+    Route::get('/request/{tenant:slug}', function (\App\Models\Tenant $tenant) {
+        return view('repair-requests.create', compact('tenant'));
+    })->name('repair-requests.create');
+
+    Route::post('/request/{tenant:slug}', [PublicRepairRequestController::class, 'store'])
+        ->name('repair-requests.store')
+        ->middleware('throttle:5,1'); // penkios užklausos per minutę
 });
 
 Route::middleware(['auth', 'role:admin,employee'])->group(function () {
