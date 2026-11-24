@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerVehicleController;
 use App\Http\Controllers\PublicRepairRequestController;
+use App\Http\Controllers\RepairOrderController;
+use App\Http\Controllers\DiagnosticController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -56,5 +58,24 @@ Route::middleware(['auth', 'role:admin,employee'])->group(function () {
 
             Route::get('/{customerId}', [CustomerVehicleController::class, 'show'])
                 ->name('show');
+        });
+
+    Route::prefix('repair-orders')
+        ->name('repair-orders.')
+        ->group(function () {
+            Route::get('/', [RepairOrderController::class, 'index'])
+                ->name('index');
+
+            Route::get('/{id}', [RepairOrderController::class, 'show'])
+                ->name('show');
+
+            Route::patch('/{id}/accept', [RepairOrderController::class, 'accept'])
+                ->name('accept');
+
+            Route::patch('/{id}/decline', [RepairOrderController::class, 'decline'])
+                ->name('decline');
+
+            Route::post('/{repairOrderId}/diagnostics', [DiagnosticController::class, 'store'])
+                ->name('diagnostics.store');
         });
 });
