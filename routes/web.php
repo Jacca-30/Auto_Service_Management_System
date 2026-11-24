@@ -26,15 +26,23 @@ Route::middleware(['auth', 'role:admin,employee'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
-    Route::get('/customers', [CustomerController::class, 'index'])
-        ->name('customers.index');
+    Route::prefix('customers')
+        ->name('customers.')
+        ->group(function () {
 
-    Route::get('/customers/create', [CustomerController::class, 'create'])
-        ->name('customers.create');
+            Route::get('/', [CustomerController::class, 'index'])
+                ->name('index');
 
-    Route::post('/customers', [CustomerController::class, 'store'])
-        ->name('customers.store');
+            Route::get('/create', [CustomerController::class, 'create'])
+                ->name('create');
 
-    Route::get('/customers', [CustomerController::class, 'index'])
-        ->name('customers.index');
+            Route::post('/', [CustomerController::class, 'store'])
+                ->name('store');
+
+            Route::get('/{customerId}/vehicles/create', [CustomerVehicleController::class, 'create'])
+                ->name('vehicles.create');
+
+            Route::post('/{customerId}/vehicles', [CustomerVehicleController::class, 'store'])
+                ->name('vehicles.store');
+        });
 });
