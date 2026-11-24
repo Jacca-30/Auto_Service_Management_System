@@ -61,7 +61,6 @@ class EstimateController extends Controller
             );
         }
 
-        // Patikriname pasirinktas inventoriaus prekes.
         foreach ($validated['items'] as $index => &$item) {
             $inventoryItem = null;
 
