@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Scopes\TenantScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,6 +25,11 @@ class InventoryMovement extends Model
         return [
             'quantity' => 'decimal:2',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new TenantScope);
     }
 
     public function tenant(): BelongsTo

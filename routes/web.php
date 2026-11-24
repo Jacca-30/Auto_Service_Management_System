@@ -9,12 +9,13 @@ use App\Http\Controllers\RepairOrderController;
 use App\Http\Controllers\DiagnosticController;
 use App\Http\Controllers\EstimateController;
 use App\Http\Controllers\EstimateResponseController;
+use App\Http\Controllers\InventoryController;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-//Samatos perziuros ir atsakymo marsrutai
+//Samatos perziuros ir atsakymo marsrutai (e-mail)
 Route::prefix('estimate')
     ->name('estimates.')
     ->group(function () {
@@ -112,4 +113,24 @@ Route::middleware(['auth', 'role:admin,employee'])->group(function () {
             Route::post('/estimates/{estimateId}/send', [EstimateController::class, 'send'])
                 ->name('estimates.send');
         });
+
+    Route::prefix('inventory')->name('inventory.')->group(function () {
+        Route::get('/', [InventoryController::class, 'index'])
+            ->name('index');
+
+        Route::get('/create', [InventoryController::class, 'create'])
+            ->name('create');
+
+        Route::post('/', [InventoryController::class, 'store'])
+            ->name('store');
+
+        Route::post('/{id}/receive', [InventoryController::class, 'receive'])
+            ->name('receive');
+
+        Route::post('/{id}/consume', [InventoryController::class, 'consume'])
+            ->name('consume');
+
+        Route::get('/{id}', [InventoryController::class, 'show'])
+            ->name('show');
+    });
 });
