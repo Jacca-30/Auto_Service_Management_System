@@ -16,12 +16,10 @@ class PublicRepairRequestController extends Controller
     public function store(Request $request, Tenant $tenant): RedirectResponse
     {
         $validated = $request->validate([
-            // Kliento duomenys
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'phone' => ['required', 'string', 'max:30'],
 
-            // Automobilio duomenys
             'make' => ['required', 'string', 'max:100'],
             'model' => ['required', 'string', 'max:100'],
             'year' => ['required', 'integer', 'min:1886', 'max:' . (date('Y') + 1)],
@@ -31,12 +29,10 @@ class PublicRepairRequestController extends Controller
             'engine_power_kw' => ['nullable', 'integer', 'min:1'],
             'transmission_type' => ['required', 'string', 'max:50'],
 
-            // Automobilio identifikacija
             'vin' => ['nullable', 'string', 'max:17'],
             'license_plate' => ['required', 'string', 'max:20'],
             'reg_cert_number' => ['nullable', 'string', 'max:100'],
 
-            // Gedimo aprašymas
             'customer_complaint' => ['required', 'string', 'max:5000'],
         ]);
 
