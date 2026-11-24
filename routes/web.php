@@ -7,6 +7,7 @@ use App\Http\Controllers\CustomerVehicleController;
 use App\Http\Controllers\PublicRepairRequestController;
 use App\Http\Controllers\RepairOrderController;
 use App\Http\Controllers\DiagnosticController;
+use App\Http\Controllers\EstimateController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -77,5 +78,11 @@ Route::middleware(['auth', 'role:admin,employee'])->group(function () {
 
             Route::post('/{repairOrderId}/diagnostics', [DiagnosticController::class, 'store'])
                 ->name('diagnostics.store');
+
+            Route::get('/{repairOrderId}/estimates/create', [EstimateController::class, 'create'])
+                ->name('estimates.create');
+
+            Route::post('/{repairOrderId}/estimates', [EstimateController::class, 'store'])
+                ->name('estimates.store');
         });
 });
