@@ -1,58 +1,188 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Autoserviso valdymo sistema
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 1. Projekto aprašymas
 
-## About Laravel
+Tai Laravel pagrindu sukurta autoserviso valdymo sistema, skirta remonto užklausoms, klientams, automobiliams, diagnostikai, remonto sąmatoms ir inventoriaus likučiams valdyti.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Sistema palaiko kelių autoservisų (Multi-Tenancy) veikimą. Kiekvienas autoservisas turi atskirus duomenis, o darbuotojai gali pasiekti tik savo autoserviso informaciją.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Pagrindinės funkcijos
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Klientų ir jų automobilių valdymas.
+- Remonto užklausų registravimas per viešą formą.
+- Remonto užsakymų priėmimas ir atmetimas.
+- Diagnostikos rezultatų registravimas.
+- Remonto sąmatų sudarymas ir versijavimas.
+- Sąmatų siuntimas klientams el. paštu.
+- Sąmatų patvirtinimas arba atmetimas per unikalią nuorodą.
+- Atsarginių dalių ir medžiagų inventoriaus valdymas.
+- Automatinis inventoriaus likučių atnaujinimas užbaigus remontą.
+- Duomenų atskyrimas pagal autoservisą.
 
-## Learning Laravel
+## 2. Naudojamos technologijos
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- PHP 8.3
+- Laravel 13.17
+- MySQL
+- HTML, CSS
+- Tailwind CSS
+- JavaScript
+- Vite
+- Composer
+- Node.js ir NPM
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 3. Reikalavimai
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+Norint paleisti projektą, kompiuteryje turi būti įdiegta:
 
-## Agentic Development
+- PHP 8.3 arba naujesnė suderinama versija.
+- Composer.
+- MySQL duomenų bazės serveris.
+- Node.js ir NPM.
+- Git.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## 4. Projekto atsisiuntimas ir įdiegimas
+
+Atsisiųskite projektą iš GitHub:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone <GITHUB_REPOSITORY_URL>
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Pereikite į projekto katalogą:
 
-## Contributing
+```bash
+cd <PROJECT_DIRECTORY>
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Įdiekite PHP priklausomybes:
 
-## Code of Conduct
+```bash
+composer install
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Įdiekite JavaScript priklausomybes:
 
-## Security Vulnerabilities
+```bash
+npm install
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 5. Aplinkos konfigūracija
 
-## License
+Sukurkite `.env` failą pagal pateiktą pavyzdį:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+cp .env.example .env
+```
+
+Sugeneruokite aplikacijos raktą:
+
+```bash
+php artisan key:generate
+```
+
+`.env` faile sukonfigūruokite MySQL duomenų bazės prisijungimo duomenis:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=YOUR_DATABASE_NAME
+DB_USERNAME=YOUR_DATABASE_USER
+DB_PASSWORD=YOUR_DATABASE_PASSWORD
+```
+
+Prieš paleidžiant migracijas reikia sukurti tuščią MySQL duomenų bazę.
+
+## 6. Duomenų bazės paruošimas
+
+Sukurkite lenteles ir įrašykite pradinius duomenis:
+
+```bash
+php artisan migrate --seed
+```
+
+Seederiai gali sukurti pradinius autoservisų, darbuotojų ir kitus demonstracinius duomenis.
+
+**Pastaba:** migracijų ir seederių vykdymas su `migrate:fresh` ištrina esamus lentelių duomenis. Naudokite šią komandą tik tada, kai norite iš naujo paruošti demonstracinę duomenų bazę.
+
+## 7. El. pašto konfigūracija
+
+Kūrimo aplinkoje naudojamas laiškų registravimas į Laravel žurnalą.
+
+`.env` faile:
+
+```env
+MAIL_MAILER=log
+```
+
+Tokiu atveju sąmatų el. laiškai nesiunčiami į tikrą el. pašto dėžutę. Jų turinį ir patvirtinimo nuorodas galima rasti faile:
+
+```text
+storage/logs/laravel.log
+```
+
+## 8. Projekto paleidimas
+
+Paleiskite Laravel serverį:
+
+```bash
+php artisan serve
+```
+
+Atskirame terminalo lange paleiskite Vite:
+
+```bash
+npm run dev
+```
+
+Aplikacija pasiekiama adresu:
+
+```text
+http://127.0.0.1:8000
+```
+
+Prieš galutinį projekto paleidimą produkcinėje aplinkoje galima sugeneruoti optimizuotus frontend failus:
+
+```bash
+npm run build
+```
+
+## 9. Automatinių testų vykdymas
+
+Automatinius testus galima paleisti komanda:
+
+```bash
+php artisan test
+```
+
+Testai skirti pagrindinių sistemos funkcijų, verslo taisyklių ir skirtingų autoservisų duomenų izoliavimo patikrinimui.
+
+## 10. Demonstravimo scenarijus
+
+Pagrindinį sistemos veikimą galima demonstruoti tokia seka:
+
+1. Prisijungti prie pirmo autoserviso darbuotojo paskyros.
+2. Per viešą formą pateikti kliento remonto užklausą.
+3. Darbuotojui priimti remonto užklausą.
+4. Užregistruoti diagnostikos rezultatus.
+5. Sudaryti remonto sąmatą, įtraukiant darbų ir inventoriaus prekių kainas.
+6. Išsiųsti sąmatą klientui.
+7. Patvirtinimo nuorodą rasti `storage/logs/laravel.log` ir atidaryti ją naršyklėje.
+8. Patvirtinti sąmatą.
+9. Užbaigti remontą ir patikrinti inventoriaus likučių pasikeitimą.
+10. Prisijungti prie antro autoserviso ir patikrinti, ar pirmojo autoserviso duomenys jam neprieinami.
+
+## 11. Duomenų saugumas
+
+Sistemoje įgyvendintas duomenų atskyrimas pagal autoservisus naudojant Laravel Global Scope ir Local Scope mechanizmus.
+
+Tai užtikrina, kad darbuotojai galėtų pasiekti tik savo autoserviso klientų, inventoriaus ir remonto užsakymų duomenis.
+
+Sąmatų patvirtinimui naudojami unikalūs saugomi tokenų maišos įrašai ir jų galiojimo laikas.
+
+---
+
+**Projekto paskirtis:** autoserviso veiklos procesų automatizavimas ir valdymas.
+
+**Technologinė platforma:** Laravel / PHP / MySQL.
