@@ -162,8 +162,8 @@ Testai skirti pagrindinių sistemos funkcijų, verslo taisyklių ir skirtingų a
 
 Pagrindinį sistemos veikimą galima demonstruoti tokia seka:
 
-1. Prisijungti prie pirmo autoserviso darbuotojo paskyros.
-2. Per viešą formą pateikti kliento remonto užklausą.
+1. Per viešą formą pateikti kliento remonto užklausą.
+2. Prisijungti prie pirmo autoserviso darbuotojo paskyros.
 3. Darbuotojui priimti remonto užklausą.
 4. Užregistruoti diagnostikos rezultatus.
 5. Sudaryti remonto sąmatą, įtraukiant darbų ir inventoriaus prekių kainas.
